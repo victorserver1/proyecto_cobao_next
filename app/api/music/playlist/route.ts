@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 // URL base pública (para generar URLs absolutas)
-const PUBLIC_BASE = "http://192.168.2.18:3000"
+const PUBLIC_BASE = process.env.PUBLIC_BASE_URL;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

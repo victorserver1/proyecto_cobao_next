@@ -9,7 +9,8 @@ export async function POST(req: Request) {
 
     // Construye y codifica la URL que consume tu servicio de transmisión
     // Ajusta host/puerto según tu setup real:
-    const targetUrl = `http://localhost:8001/play?url=${audioUrl}`;
+    const autodjUrl = process.env.AUTODJ_URL || 'http://localhost:8001';
+    const targetUrl = `${autodjUrl}/play?url=${audioUrl}`;
 
     const resp = await fetch(targetUrl, { method: "GET" });
     if (!resp.ok) {

@@ -57,11 +57,13 @@ export default function AudioCard({
   const [isPlaying, setIsPlaying] = useState(false);
   const playerRef = useRef<HTMLAudioElement | null>(null);
 
+  const public_base = process.env.PUBLIC_BASE_URL || 'http://localhost:3000';
+
   const absoluteSrc = useMemo(
     () =>
       audio.url?.startsWith('http')
         ? audio.url
-        : `http://192.168.2.18:3000${audio.url}`,
+        : `http://${public_base}${audio.url}`,
     [audio.url]
   );
 

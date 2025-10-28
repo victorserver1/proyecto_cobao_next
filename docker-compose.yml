@@ -7,12 +7,12 @@ services:
     container_name: webportal_next
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://admin:admin@localhost:5432/webportal?schema=public
-      NEXTAUTH_URL: http://localhost:3000
-      NEXTAUTH_SECRET: supersecret
+      DATABASE_URL: postgresql://cobao:vidiserver@84.247.162.161:9090/webportal
+      NEXTAUTH_URL: https://aprendealaire.com.mx
+      NEXTAUTH_SECRET: vidiserver
       # URL del AutoDJ expuesto en el host:
-      AUTODJ_URL: http://localhost:8001
+      AUTODJ_URL: http://84.247.162.161:9091
       # tu base pública para generar URLs absolutas en playlists
-      PUBLIC_BASE_URL: http://localhost:3000
+      PUBLIC_BASE_URL: https://aprendealaire.com.mx
     ports:
-      - "3000:3000"
+      - "9092:3000"
