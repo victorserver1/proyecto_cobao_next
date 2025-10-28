@@ -1,0 +1,27 @@
+.tiptap{
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    padding: 10px
+
+   
+    
+}
+.ProseMirror-focused {
+    outline: none;
+}
+.tiptap h1 {
+    font-size: 3rem;
+}
+.tiptap h2 {
+    font-size: 2rem
+}
+.tiptap h3{
+    font-size: 1.5rem
+}
+
+.tiptap img{
+    width: 60%;
+    alingth: center;
+    
+}

@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Post" ALTER COLUMN "images" SET DEFAULT ARRAY[]::TEXT[];

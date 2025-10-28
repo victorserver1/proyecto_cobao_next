@@ -1,0 +1,203 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String   
+  content   String
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  images    String[] @default([])
+  slug       String   @unique @db.VarChar(160)
+  userId    String
+
+  author    User     @relation(fields: [userId], references: [id])
+  score    Int      @default(0)
+  isReady  Boolean  @default(false)
+
+}
+
+enum status {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Audio {
+  id        Int      @id @default(autoincrement())
+  url       String   
+  createdAt DateTime @default(now())
+  userId    String 
+  status    status   @default(DRAFT)
+  title     String?
+
+  author    User     @relation(fields: [userId], references: [id])
+
+}
+
+
+// schema.prisma
+
+enum MusicStatus {
+  DRAFT
+  READY
+  PROCESSING
+  FAILED
+  ARCHIVED
+}
+
+model Music {
+  id          Int          @id @default(autoincrement())
+  // — Core —
+  title       String
+  artist      String?          // opcional (canal/autor o lo que suba el usuario)
+  duration    Int?             // segundos
+
+  // — Archivos —
+  url         String           // URL pública (ej: /music/xxxx.mp3 o https://s3/...)
+  filePath    String?          // ruta interna (si guardas en disco local)
+  mimeType    String?          // ej: audio/mpeg
+  sizeBytes   Int?             // tamaño del archivo
+
+  // — Estado —
+  status      MusicStatus      @default(READY)
+  errorMsg    String?          // si FAILED, registra aquí el motivo
+
+  // — Visual —
+  thumbnail   String?          // URL de cover/miniatura
+
+  // — YouTube (opcional) —
+  youtubeUrl  String?          @unique
+  youtubeId   String?          @unique
+  ytdl        Json?            // payload crudo de ytdl (JSONB en Postgres)
+
+  // — Auditoría —
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // — Relaciones (ajusta el tipo si tu User usa Int/UUID) —
+
+
+  @@index([status])
+
+  @@index([title])
+  @@index([artist])
+  @@index([createdAt])
+  // Única combinada para evitar colisiones de archivos idénticos de un mismo user (opcional)
+  // @@unique([userId, url])
+}
+
+enum AdsStatus {
+  DRAFT
+  READY
+  PROCESSING
+  FAILED
+  ARCHIVED
+}
+
+model Ads {
+  id          Int          @id @default(autoincrement())
+  // — Core —
+  title       String
+  artist      String?          // opcional (canal/autor o lo que suba el usuario)
+  duration    Int?             // segundos
+
+  // — Archivos —
+  url         String           // URL pública (ej: /music/xxxx.mp3 o https://s3/...)
+  filePath    String?          // ruta interna (si guardas en disco local)
+  mimeType    String?          // ej: audio/mpeg
+  sizeBytes   Int?             // tamaño del archivo
+
+  // — Estado —
+  status      MusicStatus      @default(READY)
+  errorMsg    String?          // si FAILED, registra aquí el motivo
+
+  // — Visual —
+  thumbnail   String?          // URL de cover/miniatura
+
+  // — YouTube (opcional) —
+  youtubeUrl  String?          @unique
+  youtubeId   String?          @unique
+  ytdl        Json?            // payload crudo de ytdl (JSONB en Postgres)
+
+  // — Auditoría —
+
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // — Relaciones (ajusta el tipo si tu User usa Int/UUID) —
+
+
+  @@index([status])
+
+  @@index([title])
+  @@index([artist])
+  @@index([createdAt])
+  // Única combinada para evitar colisiones de archivos idénticos de un mismo user (opcional)
+  // @@unique([userId, url])
+}
+
+
+
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String?  @unique
+  emailVerified DateTime?
+  image         String?
+  
+
+  // Extra (ejemplo): rol
+  roles        String[] @default([])
+  isActive    Boolean  @default(true)
+
+  accounts      Account[]
+  sessions      Session[]
+  posts         Post[]
+  audios        Audio[]
+
+
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
